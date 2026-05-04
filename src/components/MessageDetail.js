@@ -302,23 +302,7 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
           </button>
         </div>
 
-        {parsedDraft.actions.length > 0 && !triage?.approved && (
-          <div className="suggested-actions" style={{ marginTop: '16px' }}>
-            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8, letterSpacing: '0.05em' }}>SUGGESTED ACTIONS</div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {parsedDraft.actions.map((act, idx) => (
-                <span key={idx} className="action-pill" onClick={(e) => {
-                  e.target.style.background = 'var(--text-primary)';
-                  e.target.style.color = 'var(--surface)';
-                  e.target.innerText = '✓ Queued';
-                  e.target.style.pointerEvents = 'none';
-                }}>
-                  ⚡ {act}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+
 
         {triage?.approved && (
           <div className="approved-banner">

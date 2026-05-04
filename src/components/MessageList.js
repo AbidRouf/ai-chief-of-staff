@@ -197,7 +197,6 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
               className="sort-select" 
               value={sortBy} 
               onChange={(e) => setSortBy(e.target.value)}
-              style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: 4, border: '1px solid var(--border)', background: 'var(--surface)', cursor: 'pointer', outline: 'none' }}
             >
               <option value="severity">Sort: Importance</option>
               <option value="recent">Sort: Recent</option>

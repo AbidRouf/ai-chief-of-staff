@@ -127,7 +127,6 @@ Return this exact JSON structure:
       "reasoning": "...",
       "delegateTo": "name/role or null",
       "drafted_responses": ["Option 1...", "Option 2..."],
-      "suggested_actions": ["CC Mary", "Schedule Meeting"],
       "deadline": "deadline string or null",
       "flags": ["flag_keyword"]
     }
@@ -191,7 +190,6 @@ Return JSON:
     "Option 1: Draft response agreeing/confirming",
     "Option 2: Draft response pushing back/declining"
   ],
-  "suggested_actions": ["CC Mary", "Schedule 15m Meeting"],
   "reasoning": "why this category makes sense",
   "urgency": 1-5
 }`;
