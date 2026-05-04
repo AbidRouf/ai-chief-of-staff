@@ -58,7 +58,7 @@ Open [http://localhost:3000](http://localhost:3000) and click **Load Sample Data
 
 ### Why one LLM call for all messages?
 
-Most naive implementations triage each message individually. This misses critical cross-message intelligence:
+Most implementations triage each message individually. This misses critical cross-message intelligence:
 
 - **Sarah Chen** contacts via email (#1) AND WhatsApp (#18) about the same Thursday meeting
 - **James (COO)** contradicts himself: asks to push the board deck (#3), then reverses (#10)
