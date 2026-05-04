@@ -196,13 +196,18 @@ function getCommandPrompt() {
   return `You are parsing a CEO's natural language input in their AI triage system. The input can be one of three types:
 
 1. QUERY: asking about messages ("what did Mark send?", "summarize the Horizon situation")
-2. RULE: setting a persistent preference ("flag all messages from James", "always delegate newsletters to EA")
+2. RULE: setting a persistent preference ("flag all messages from James", "always delegate newsletters to EA", "put tom's messages to ignore")
 3. ACTION: reclassifying a specific message ("delegate message 4 to IT security")
+
+CRITICAL FOR RULES:
+- When the user references a person with pronouns ("his", "her", "their") or context-dependent references, you MUST resolve them to the actual sender name from the available messages. For example, if the previous query was about "Tom" and the user says "put all his messages to ignore", the condition.value should be "tom" NOT "his" or "the specified sender".
+- The condition.value must be a concrete, matchable string (a name, keyword, or channel name).
+- Always use "contains" operator for sender matching so partial matches work (e.g., "tom" matches "tom.bradley").
 
 Determine the type and respond accordingly.
 
 For QUERY: search the available messages and answer the question.
-For RULE: parse into a structured rule.
+For RULE: parse into a structured rule with a clear human-readable description.
 For ACTION: identify the message and new category.
 
 Return JSON:
@@ -217,8 +222,9 @@ Return JSON:
   // For RULE:
   "rule": {
     "type": "sender_priority|keyword_flag|channel_filter|category_override",
-    "condition": {"field": "from|subject|body|channel", "operator": "contains|equals|matches", "value": "..."},
-    "action": {"set_category": "decide|delegate|ignore", "flag": true, "flag_reason": "..."}
+    "condition": {"field": "from|subject|body|channel", "operator": "contains|equals", "value": "the actual resolved name/keyword, never pronouns"},
+    "action": {"set_category": "decide|delegate|ignore", "flag": true, "flag_reason": "..."},
+    "description": "A clear one-sentence summary like: Always ignore messages from Tom Bradley"
   },
   
   // For ACTION:
@@ -227,7 +233,7 @@ Return JSON:
     "newCategory": "delegate",
     "delegateTo": "IT Security"
   }
-}`;
+}`; 
 }
 
 export default openai;

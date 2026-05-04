@@ -216,6 +216,7 @@ export default function Dashboard({ data, onUpdateData }) {
           <MessageDetail
             message={selectedMessage}
             thread={selectedMessage ? getThread(selectedMessage.id) : null}
+            allMessages={messages || []}
             onApprove={handleApprove}
             onDelegateStatus={handleDelegateStatus}
             onDelegateChange={handleDelegateChange}
@@ -252,16 +253,50 @@ export default function Dashboard({ data, onUpdateData }) {
             <div className="settings-section">
               <div className="settings-section-title">Active Rules ({rules?.length || 0})</div>
               {(!rules || rules.length === 0) ? (
-                <div style={{ color: 'var(--text-tertiary)', fontSize: '0.82rem', fontStyle: 'italic' }}>
-                  No rules yet. Use the AI assistant (⌘) to create rules like &ldquo;flag all messages from Mark&rdquo;.
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '0.82rem', fontStyle: 'italic', lineHeight: 1.6 }}>
+                  No rules set. Use the AI chat to create rules, for example:<br />
+                  &bull; &ldquo;Ignore all messages from Tom&rdquo;<br />
+                  &bull; &ldquo;Flag emails about API migration&rdquo;<br />
+                  &bull; &ldquo;Always prioritize Sarah Chen&rdquo;
                 </div>
               ) : (
-                rules.map(rule => (
-                  <div key={rule.id} className="rule-item">
-                    <span className="rule-text">{rule.naturalText}</span>
-                    <button className="rule-delete" onClick={() => handleDeleteRule(rule.id)} title="Remove rule">×</button>
-                  </div>
-                ))
+                rules.map(rule => {
+                  let condition = {};
+                  let action = {};
+                  try { condition = JSON.parse(rule.condition); } catch {}
+                  try { action = JSON.parse(rule.action); } catch {}
+
+                  const actionLabel = action.set_category || (action.flag ? 'flag' : '');
+                  const actionColor = actionLabel === 'decide' ? 'var(--decide)' : actionLabel === 'delegate' ? 'var(--delegate)' : actionLabel === 'ignore' ? 'var(--ignore)' : 'var(--flag-warning)';
+
+                  return (
+                    <div key={rule.id} style={{
+                      padding: '10px 14px',
+                      border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius-md)',
+                      marginBottom: 8,
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                      gap: 10,
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 500, marginBottom: 4 }}>
+                          {rule.naturalText}
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                          <span style={{ padding: '1px 6px', borderRadius: 100, fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', background: actionColor, color: 'white' }}>
+                            {actionLabel}
+                          </span>
+                          {condition.field && (
+                            <span>When {condition.field} {condition.operator} &ldquo;{condition.value}&rdquo;</span>
+                          )}
+                        </div>
+                      </div>
+                      <button className="rule-delete" onClick={() => handleDeleteRule(rule.id)} title="Remove rule">×</button>
+                    </div>
+                  );
+                })
               )}
             </div>
 

@@ -44,7 +44,7 @@ function friendlyDeadline(deadlineStr) {
   }
 }
 
-export default function MessageDetail({ message, thread, onApprove, onDelegateStatus, onDelegateChange, onSelectMessage }) {
+export default function MessageDetail({ message, thread, allMessages, onApprove, onDelegateStatus, onDelegateChange, onSelectMessage }) {
   const [draft, setDraft] = useState(message?.triage?.draftedResponse || '');
   const [prevId, setPrevId] = useState(null);
   const [editingDelegate, setEditingDelegate] = useState(false);
@@ -114,7 +114,7 @@ export default function MessageDetail({ message, thread, onApprove, onDelegateSt
         </div>
         {thread && (
           <div style={{ marginTop: 10 }}>
-            <ThreadIndicator thread={thread} onClickMessage={onSelectMessage} />
+            <ThreadIndicator thread={thread} currentMessageId={message.id} allMessages={allMessages || []} onClickMessage={onSelectMessage} />
           </div>
         )}
       </div>

@@ -23,7 +23,7 @@ export async function POST(request) {
           type: result.rule.type,
           condition: JSON.stringify(result.rule.condition),
           action: JSON.stringify(result.rule.action),
-          naturalText: command,
+          naturalText: result.rule.description || command,
         },
       });
 
