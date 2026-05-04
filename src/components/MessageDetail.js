@@ -272,11 +272,11 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
                 className="draft-option-card"
                 onClick={() => setDraft(opt)}
                 style={{
-                  padding: '10px', border: draft === opt ? '2px solid var(--primary)' : '1px solid var(--border)', 
-                  borderRadius: '6px', minWidth: '200px', cursor: 'pointer', background: 'var(--surface)'
+                  padding: '10px', border: draft === opt ? '2px solid var(--text-primary)' : '1px solid var(--border)', 
+                  borderRadius: '6px', minWidth: '200px', cursor: 'pointer', background: draft === opt ? 'var(--surface-hover)' : 'var(--surface)'
                 }}
               >
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', marginBottom: '4px', color: draft === opt ? 'var(--primary)' : 'var(--text-secondary)' }}>Option {idx + 1}</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: '600', marginBottom: '4px', color: draft === opt ? 'var(--text-primary)' : 'var(--text-secondary)' }}>Option {idx + 1}</div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {opt}
                 </div>
@@ -308,8 +308,8 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {parsedDraft.actions.map((act, idx) => (
                 <span key={idx} className="action-pill" onClick={(e) => {
-                  e.target.style.background = 'var(--primary)';
-                  e.target.style.color = 'white';
+                  e.target.style.background = 'var(--text-primary)';
+                  e.target.style.color = 'var(--surface)';
                   e.target.innerText = '✓ Queued';
                   e.target.style.pointerEvents = 'none';
                 }}>

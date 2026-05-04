@@ -180,8 +180,8 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-          <div className="filter-tabs" style={{ marginTop: 0, paddingBottom: '4px', overflowX: 'auto', flex: 1, whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+          <div className="filter-tabs" style={{ marginTop: 0, paddingBottom: '4px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
             {['all', 'decide', 'delegate', 'ignore', 'archived'].map(f => (
               <button
                 key={f}
@@ -192,7 +192,7 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
               </button>
             ))}
           </div>
-          <div className="sort-bar" style={{ marginLeft: '10px', flexShrink: 0 }}>
+          <div className="sort-bar" style={{ display: 'flex' }}>
             <select 
               className="sort-select" 
               value={sortBy} 
