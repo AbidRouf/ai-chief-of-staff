@@ -44,7 +44,9 @@ function friendlyDeadline(deadlineStr) {
   }
 }
 
-export default function MessageDetail({ message, thread, allMessages, onApprove, onDelegateStatus, onDelegateChange, onSelectMessage }) {
+const URGENCY_LABELS = { 1: 'Low', 2: 'Minor', 3: 'Medium', 4: 'High', 5: 'Critical' };
+
+export default function MessageDetail({ message, thread, allMessages, onApprove, onDelegateStatus, onDelegateChange, onSelectMessage, onChangeCategory, onChangeUrgency }) {
   const [draft, setDraft] = useState(message?.triage?.draftedResponse || '');
   const [prevId, setPrevId] = useState(null);
   const [editingDelegate, setEditingDelegate] = useState(false);
@@ -94,7 +96,11 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
         <div className="detail-from">
           <span>{CHANNEL_ICONS[message.channel]}</span>
           <span>{senderName}</span>
-          <TriageBadge category={triage?.category || 'ignore'} />
+          <TriageBadge
+            category={triage?.category || 'ignore'}
+            editable={true}
+            onChangeCategory={(cat) => onChangeCategory && onChangeCategory(message.id, cat)}
+          />
           {triage?.overriddenBy && <span className="override-badge">{triage.overriddenBy}</span>}
         </div>
         <div className="detail-meta">
@@ -111,6 +117,22 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
               {senderEmail}
             </div>
           )}
+        </div>
+        <div className="urgency-editor">
+          <span className="urgency-editor-label">Severity</span>
+          <div className="urgency-dots-editable">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div
+                key={i}
+                className={`urgency-dot-editable ${i <= (triage?.urgency || 1) ? 'filled' : ''}`}
+                onClick={() => onChangeUrgency && onChangeUrgency(message.id, i)}
+                title={`Set severity to ${i} (${URGENCY_LABELS[i]})`}
+              />
+            ))}
+          </div>
+          <span className="urgency-level-text">
+            {triage?.urgency || 1}/5 {URGENCY_LABELS[triage?.urgency || 1]}
+          </span>
         </div>
         {thread && (
           <div style={{ marginTop: 10 }}>

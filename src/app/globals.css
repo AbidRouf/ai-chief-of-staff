@@ -313,6 +313,73 @@ h4 { font-size: 1rem; font-weight: 600; }
 .triage-badge.delegate { background: var(--delegate-bg); color: var(--delegate); border: 1px solid var(--delegate-border); }
 .triage-badge.ignore { background: var(--ignore-bg); color: var(--ignore); border: 1px solid var(--ignore-border); }
 
+.triage-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 140px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  z-index: 50;
+  overflow: hidden;
+  animation: scaleIn 0.12s var(--ease-out-expo);
+}
+
+.triage-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.triage-dropdown-item:hover { background: var(--surface-hover); }
+.triage-dropdown-item.current { opacity: 0.5; cursor: default; }
+
+/* Editable urgency dots (detail view) */
+.urgency-editor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.urgency-editor-label {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.urgency-dots-editable {
+  display: flex;
+  gap: 4px;
+}
+
+.urgency-dot-editable {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.urgency-dot-editable.filled { background: var(--text-primary); }
+.urgency-dot-editable:hover { transform: scale(1.3); border-color: var(--text-tertiary); }
+
+.urgency-level-text {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
 /* Message detail */
 .detail-empty {
   display: flex;

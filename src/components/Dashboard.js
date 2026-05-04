@@ -138,6 +138,42 @@ export default function Dashboard({ data, onUpdateData }) {
     }
   }
 
+  async function handleChangeCategory(messageId, newCategory) {
+    try {
+      await fetch('/api/triage', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messageId, category: newCategory }),
+      });
+      const updatedMessages = messages.map(m =>
+        m.id === messageId
+          ? { ...m, triage: { ...m.triage, category: newCategory, overriddenBy: 'user' } }
+          : m
+      );
+      onUpdateData({ ...data, messages: updatedMessages });
+    } catch (err) {
+      console.error('Category change failed:', err);
+    }
+  }
+
+  async function handleChangeUrgency(messageId, urgency) {
+    try {
+      await fetch('/api/triage', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messageId, urgency }),
+      });
+      const updatedMessages = messages.map(m =>
+        m.id === messageId
+          ? { ...m, triage: { ...m.triage, urgency } }
+          : m
+      );
+      onUpdateData({ ...data, messages: updatedMessages });
+    } catch (err) {
+      console.error('Urgency change failed:', err);
+    }
+  }
+
   async function handleCommand(command) {
     setIsCommandLoading(true);
     try {
@@ -233,6 +269,8 @@ export default function Dashboard({ data, onUpdateData }) {
             onApprove={handleApprove}
             onDelegateStatus={handleDelegateStatus}
             onDelegateChange={handleDelegateChange}
+            onChangeCategory={handleChangeCategory}
+            onChangeUrgency={handleChangeUrgency}
             onSelectMessage={(id) => { setSelectedId(id); setMobileTab('detail'); }}
           />
         </div>
