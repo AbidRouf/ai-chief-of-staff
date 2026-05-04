@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import TriageBadge from './TriageBadge';
 import ThreadIndicator from './ThreadIndicator';
 
@@ -51,6 +51,28 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
   const [prevId, setPrevId] = useState(null);
   const [editingDelegate, setEditingDelegate] = useState(false);
   const [delegateInput, setDelegateInput] = useState('');
+  const [showDelegateDropdown, setShowDelegateDropdown] = useState(false);
+  const delegateRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (delegateRef.current && !delegateRef.current.contains(e.target)) {
+        setShowDelegateDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const allDelegates = Array.from(new Set(
+    (allMessages || [])
+      .map(m => m.triage?.delegateTo)
+      .filter(Boolean)
+  )).sort();
+
+  const filteredDelegates = allDelegates.filter(d =>
+    d.toLowerCase().includes(delegateInput.toLowerCase())
+  );
 
   if (message?.id !== prevId) {
     setPrevId(message?.id);
@@ -168,19 +190,41 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
           <div className="detail-section-title">Delegation</div>
           <div className="delegate-info">
             {editingDelegate ? (
-              <>
+              <div ref={delegateRef} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span>→ Assign to: </span>
-                <input
-                  className="delegate-edit-input"
-                  value={delegateInput}
-                  onChange={(e) => setDelegateInput(e.target.value)}
-                  onKeyDown={handleDelegateKeyDown}
-                  autoFocus
-                  placeholder="Team or person..."
-                />
+                <div style={{ position: 'relative' }}>
+                  <input
+                    className="delegate-edit-input"
+                    value={delegateInput}
+                    onChange={(e) => {
+                      setDelegateInput(e.target.value);
+                      setShowDelegateDropdown(true);
+                    }}
+                    onFocus={() => setShowDelegateDropdown(true)}
+                    onKeyDown={handleDelegateKeyDown}
+                    autoFocus
+                    placeholder="Team or person..."
+                  />
+                  {showDelegateDropdown && filteredDelegates.length > 0 && (
+                    <div className="delegate-dropdown">
+                      {filteredDelegates.map(d => (
+                        <div
+                          key={d}
+                          className="delegate-dropdown-item"
+                          onClick={() => {
+                            setDelegateInput(d);
+                            setShowDelegateDropdown(false);
+                          }}
+                        >
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button className="delegate-edit-btn" onClick={handleDelegateSave}>Save</button>
                 <button className="delegate-edit-btn" onClick={() => setEditingDelegate(false)}>Cancel</button>
-              </>
+              </div>
             ) : (
               <>
                 <span>→ Assigned to <strong>{triage.delegateTo || 'Unassigned'}</strong></span>
