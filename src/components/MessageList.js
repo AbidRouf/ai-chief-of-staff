@@ -19,13 +19,13 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
       )
     : messages;
 
-  const activeMessages = searchFiltered.filter(m => !m.triage?.approved);
-  const archivedMessages = searchFiltered.filter(m => m.triage?.approved);
+  const activeMessages = searchFiltered.filter(m => !m.triage?.approved && m.triage?.delegateStatus !== 'done');
+  const archivedMessages = searchFiltered.filter(m => m.triage?.approved || m.triage?.delegateStatus === 'done');
 
   const filtered = filter === 'archived'
     ? archivedMessages
     : filter === 'all'
-      ? searchFiltered
+      ? activeMessages
       : activeMessages.filter(m => m.triage?.category === filter);
 
   const categories = ['decide', 'delegate', 'ignore'];
@@ -92,7 +92,7 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
     return (
       <div
         key={msg.id}
-        className={`message-item ${selectedId === msg.id ? 'selected' : ''} ${msg.triage?.approved ? 'approved-item' : ''}`}
+        className={`message-item ${selectedId === msg.id ? 'selected' : ''} ${msg.triage?.approved || msg.triage?.delegateStatus === 'done' ? 'approved-item' : ''}`}
         onClick={() => onSelect(msg.id)}
         draggable
         onDragStart={(e) => handleDragStart(e, msg.id)}
@@ -148,13 +148,13 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
-          color: `var(--${category})`,
-          background: `var(--${category}-bg)`,
+          color: category === 'done' ? '#10B981' : `var(--${category})`,
+          background: category === 'done' ? 'rgba(16,185,129,0.1)' : `var(--${category}-bg)`,
           position: 'sticky',
           top: 0,
           zIndex: 3,
         }}>
-          {category} ({msgs.length})
+          {category === 'done' ? 'Archived & Done' : category} ({msgs.length})
         </div>
         {msgs
           .sort((a, b) => {
@@ -206,7 +206,12 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
       </div>
       <div className="panel-content">
         {filter === 'all'
-          ? categories.map(cat => renderCategory(cat, grouped[cat] || []))
+          ? (
+            <>
+              {categories.map(cat => renderCategory(cat, grouped[cat] || []))}
+              {renderCategory('done', archivedMessages)}
+            </>
+          )
           : (filter === 'archived' ? filtered : (grouped[filter] || []))
               .sort((a, b) => {
                 if (sortBy === 'severity') return (b.triage?.urgency || 0) - (a.triage?.urgency || 0);

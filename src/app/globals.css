@@ -296,9 +296,8 @@ h4 { font-size: 1rem; font-weight: 600; }
 }
 
 .message-item.approved-item {
-  background: rgba(16, 185, 129, 0.05);
-  border-left-color: var(--primary);
-  opacity: 0.8;
+  background: rgba(16, 185, 129, 0.12);
+  border-left-color: #10B981;
 }
 
 .message-item.selected { background: var(--surface-hover); }
