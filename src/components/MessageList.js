@@ -180,27 +180,29 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div className="filter-tabs">
-          {['all', 'decide', 'delegate', 'ignore', 'archived'].map(f => (
-            <button
-              key={f}
-              className={`filter-tab ${filter === f ? 'active' : ''}`}
-              onClick={() => setFilter(f)}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+          <div className="filter-tabs" style={{ marginTop: 0, paddingBottom: '4px', overflowX: 'auto', flex: 1, whiteSpace: 'nowrap' }}>
+            {['all', 'decide', 'delegate', 'ignore', 'archived'].map(f => (
+              <button
+                key={f}
+                className={`filter-tab ${filter === f ? 'active' : ''}`}
+                onClick={() => setFilter(f)}
+              >
+                {f}<span className="filter-tab-count">{counts[f]}</span>
+              </button>
+            ))}
+          </div>
+          <div className="sort-bar" style={{ marginLeft: '10px', flexShrink: 0 }}>
+            <select 
+              className="sort-select" 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: 4, border: '1px solid var(--border)', background: 'var(--surface)', cursor: 'pointer', outline: 'none' }}
             >
-              {f}<span className="filter-tab-count">{counts[f]}</span>
-            </button>
-          ))}
-        </div>
-        <div className="sort-bar" style={{ padding: '0 20px 10px', display: 'flex', justifyContent: 'flex-end' }}>
-          <select 
-            className="sort-select" 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: 4, border: '1px solid var(--border)', background: 'var(--surface)' }}
-          >
-            <option value="severity">Sort by: Most Important</option>
-            <option value="recent">Sort by: Most Recent</option>
-          </select>
+              <option value="severity">Sort: Importance</option>
+              <option value="recent">Sort: Recent</option>
+            </select>
+          </div>
         </div>
       </div>
       <div className="panel-content">
