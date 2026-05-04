@@ -6,6 +6,7 @@ import MessageDetail from './MessageDetail';
 import Briefing from './Briefing';
 import CommandBar from './CommandBar';
 import IntegrationModal from './IntegrationModal';
+import ChannelIcon from './ChannelIcon';
 
 export default function Dashboard({ data, onUpdateData }) {
   const [selectedId, setSelectedId] = useState(null);
@@ -354,14 +355,14 @@ export default function Dashboard({ data, onUpdateData }) {
             <div className="settings-section">
               <div className="settings-section-title">Connected Sources</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <button className="source-btn" style={{ width: '100%' }} onClick={() => setIntegrationService('gmail')}>
-                  <span className="source-icon">📧</span> Connect Gmail
+                <button className="source-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10 }} onClick={() => setIntegrationService('gmail')}>
+                  <span className="source-icon" style={{ display: 'flex' }}><ChannelIcon channel="email" size={18} /></span> Connect Gmail
                 </button>
-                <button className="source-btn" style={{ width: '100%' }} onClick={() => setIntegrationService('slack')}>
-                  <span className="source-icon">💬</span> Connect Slack
+                <button className="source-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10 }} onClick={() => setIntegrationService('slack')}>
+                  <span className="source-icon" style={{ display: 'flex' }}><ChannelIcon channel="slack" size={18} /></span> Connect Slack
                 </button>
-                <button className="source-btn" style={{ width: '100%' }} onClick={() => setIntegrationService('whatsapp')}>
-                  <span className="source-icon">📱</span> Connect WhatsApp
+                <button className="source-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10 }} onClick={() => setIntegrationService('whatsapp')}>
+                  <span className="source-icon" style={{ display: 'flex' }}><ChannelIcon channel="whatsapp" size={18} /></span> Connect WhatsApp
                 </button>
               </div>
             </div>
