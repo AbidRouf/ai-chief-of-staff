@@ -8,10 +8,20 @@ const CHANNEL_ICONS = { email: '📧', slack: '💬', whatsapp: '📱' };
 export default function MessageList({ messages, threads, selectedId, onSelect, onReclassify }) {
   const [filter, setFilter] = useState('all');
   const [dragOverCategory, setDragOverCategory] = useState(null);
+  const [search, setSearch] = useState('');
+
+  const searchLower = search.toLowerCase();
+  const searchFiltered = search
+    ? messages.filter(m =>
+        (m.sender || '').toLowerCase().includes(searchLower) ||
+        (m.subject || '').toLowerCase().includes(searchLower) ||
+        (m.body || '').toLowerCase().includes(searchLower)
+      )
+    : messages;
 
   const filtered = filter === 'all'
-    ? messages
-    : messages.filter(m => m.triage?.category === filter);
+    ? searchFiltered
+    : searchFiltered.filter(m => m.triage?.category === filter);
 
   const categories = ['decide', 'delegate', 'ignore'];
   const grouped = {};
@@ -145,6 +155,16 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
     <div className="panel" style={{ background: 'var(--surface)' }}>
       <div className="panel-header">
         <h2>Messages</h2>
+        <div className="search-bar">
+          <span className="search-icon">🔍</span>
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search messages..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
         <div className="filter-tabs">
           {['all', 'decide', 'delegate', 'ignore'].map(f => (
             <button

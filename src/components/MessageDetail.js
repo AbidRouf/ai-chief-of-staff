@@ -6,15 +6,56 @@ import ThreadIndicator from './ThreadIndicator';
 
 const CHANNEL_ICONS = { email: '📧', slack: '💬', whatsapp: '📱' };
 
-export default function MessageDetail({ message, thread, onApprove, onDelegateStatus, onSelectMessage }) {
+function friendlyDate(dateStr) {
+  if (!dateStr) return null;
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-GB', {
+      weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+function friendlyDeadline(deadlineStr) {
+  if (!deadlineStr) return null;
+  try {
+    const d = new Date(deadlineStr);
+    if (isNaN(d.getTime())) return deadlineStr;
+    const now = new Date();
+    const diffMs = d - now;
+    const diffHrs = Math.round(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+    let relative = '';
+    if (diffHrs < 0) relative = '(overdue)';
+    else if (diffHrs < 24) relative = `(in ${diffHrs} hours)`;
+    else if (diffDays <= 7) relative = `(in ${diffDays} days)`;
+
+    return d.toLocaleDateString('en-GB', {
+      weekday: 'short', day: 'numeric', month: 'short',
+      hour: '2-digit', minute: '2-digit',
+    }) + (relative ? ' ' + relative : '');
+  } catch {
+    return deadlineStr;
+  }
+}
+
+export default function MessageDetail({ message, thread, onApprove, onDelegateStatus, onDelegateChange, onSelectMessage }) {
   const [draft, setDraft] = useState(message?.triage?.draftedResponse || '');
   const [prevId, setPrevId] = useState(null);
+  const [editingDelegate, setEditingDelegate] = useState(false);
+  const [delegateInput, setDelegateInput] = useState('');
 
   if (message?.id !== prevId) {
     setPrevId(message?.id);
     if (message?.triage?.draftedResponse) {
       setDraft(message.triage.draftedResponse);
     }
+    setEditingDelegate(false);
   }
 
   if (!message) {
@@ -27,10 +68,25 @@ export default function MessageDetail({ message, thread, onApprove, onDelegateSt
 
   const senderName = message.sender?.replace(/<.*>/, '').trim() || message.sender;
   const senderEmail = message.sender?.match(/<(.+)>/)?.[1];
-  const time = new Date(message.timestamp).toLocaleString('en-GB', {
-    weekday: 'short', hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short',
-  });
+  const time = friendlyDate(message.timestamp);
   const triage = message.triage;
+
+  function handleDelegateEdit() {
+    setDelegateInput(triage?.delegateTo || '');
+    setEditingDelegate(true);
+  }
+
+  function handleDelegateSave() {
+    if (delegateInput.trim() && onDelegateChange) {
+      onDelegateChange(message.id, delegateInput.trim());
+    }
+    setEditingDelegate(false);
+  }
+
+  function handleDelegateKeyDown(e) {
+    if (e.key === 'Enter') handleDelegateSave();
+    if (e.key === 'Escape') setEditingDelegate(false);
+  }
 
   return (
     <div className="panel fade-in" style={{ background: 'var(--surface)' }}>
@@ -48,7 +104,7 @@ export default function MessageDetail({ message, thread, onApprove, onDelegateSt
             {message.channelName && <span style={{ color: 'var(--text-tertiary)' }}>in {message.channelName}</span>}
           </div>
           <div className="detail-meta-item">
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}>{time}</span>
+            <span style={{ fontSize: '0.72rem' }}>{time}</span>
           </div>
           {senderEmail && (
             <div className="detail-meta-item" style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)' }}>
@@ -79,26 +135,45 @@ export default function MessageDetail({ message, thread, onApprove, onDelegateSt
         <div className="detail-section-title">AI Analysis</div>
         <div className="detail-reasoning">{triage?.reasoning}</div>
         {triage?.deadline && (
-          <div style={{ marginTop: 8, fontSize: '0.78rem', color: 'var(--flag-warning)', fontFamily: 'var(--font-mono)' }}>
-            Deadline: {triage.deadline}
+          <div style={{ marginTop: 8, fontSize: '0.78rem', color: 'var(--flag-warning)' }}>
+            ⏰ {friendlyDeadline(triage.deadline)}
           </div>
         )}
       </div>
 
-      {triage?.category === 'delegate' && triage?.delegateTo && (
+      {triage?.category === 'delegate' && (
         <div className="detail-section">
           <div className="detail-section-title">Delegation</div>
           <div className="delegate-info">
-            <span>→ Assigned to <strong>{triage.delegateTo}</strong></span>
-            <span
-              className={`delegate-status ${triage.delegateStatus || 'pending'}`}
-              onClick={() => onDelegateStatus && onDelegateStatus(
-                message.id,
-                triage.delegateStatus === 'done' ? 'pending' : 'done'
-              )}
-            >
-              {triage.delegateStatus === 'done' ? '✓ Done' : '○ Pending'}
-            </span>
+            {editingDelegate ? (
+              <>
+                <span>→ Assign to: </span>
+                <input
+                  className="delegate-edit-input"
+                  value={delegateInput}
+                  onChange={(e) => setDelegateInput(e.target.value)}
+                  onKeyDown={handleDelegateKeyDown}
+                  autoFocus
+                  placeholder="Team or person..."
+                />
+                <button className="delegate-edit-btn" onClick={handleDelegateSave}>Save</button>
+                <button className="delegate-edit-btn" onClick={() => setEditingDelegate(false)}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <span>→ Assigned to <strong>{triage.delegateTo || 'Unassigned'}</strong></span>
+                <button className="delegate-edit-btn" onClick={handleDelegateEdit}>Change</button>
+                <span
+                  className={`delegate-status ${triage.delegateStatus || 'pending'}`}
+                  onClick={() => onDelegateStatus && onDelegateStatus(
+                    message.id,
+                    triage.delegateStatus === 'done' ? 'pending' : 'done'
+                  )}
+                >
+                  {triage.delegateStatus === 'done' ? '✓ Done' : '○ Pending'}
+                </span>
+              </>
+            )}
           </div>
         </div>
       )}
