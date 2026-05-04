@@ -13,6 +13,7 @@ export default function Dashboard({ data, onUpdateData }) {
   const [theme, setTheme] = useState('light');
   const [showSettings, setShowSettings] = useState(false);
   const [integrationService, setIntegrationService] = useState(null);
+  const [mobileTab, setMobileTab] = useState('messages');
 
   // Resizable panels
   const [panelWidths, setPanelWidths] = useState([320, null, 360]);
@@ -198,13 +199,25 @@ export default function Dashboard({ data, onUpdateData }) {
         </div>
       </header>
 
+      <div className="mobile-tabs">
+        <button className={`mobile-tab ${mobileTab === 'messages' ? 'active' : ''}`} onClick={() => setMobileTab('messages')}>
+          Messages<span className="mobile-tab-badge">{messages?.length || 0}</span>
+        </button>
+        <button className={`mobile-tab ${mobileTab === 'detail' ? 'active' : ''}`} onClick={() => setMobileTab('detail')}>
+          Detail
+        </button>
+        <button className={`mobile-tab ${mobileTab === 'briefing' ? 'active' : ''}`} onClick={() => setMobileTab('briefing')}>
+          Briefing
+        </button>
+      </div>
+
       <div className="dashboard" ref={dashboardRef}>
-        <div style={{ width: panelWidths[0] || 320, flexShrink: 0, minWidth: 200, height: '100%', overflow: 'hidden' }}>
+        <div className={mobileTab === 'messages' ? 'mobile-active' : ''} style={{ width: panelWidths[0] || 320, flexShrink: 0, minWidth: 200, height: '100%', overflow: 'hidden' }}>
           <MessageList
             messages={messages || []}
             threads={threads || []}
             selectedId={selectedId}
-            onSelect={setSelectedId}
+            onSelect={(id) => { setSelectedId(id); setMobileTab('detail'); }}
             onReclassify={handleReclassify}
           />
         </div>
@@ -212,7 +225,7 @@ export default function Dashboard({ data, onUpdateData }) {
           className="panel-resize-handle"
           onMouseDown={(e) => handleMouseDown(e, 0)}
         />
-        <div style={{ flex: 1, minWidth: 200, height: '100%', overflow: 'hidden' }}>
+        <div className={mobileTab === 'detail' ? 'mobile-active' : ''} style={{ flex: 1, minWidth: 200, height: '100%', overflow: 'hidden' }}>
           <MessageDetail
             message={selectedMessage}
             thread={selectedMessage ? getThread(selectedMessage.id) : null}
@@ -220,20 +233,20 @@ export default function Dashboard({ data, onUpdateData }) {
             onApprove={handleApprove}
             onDelegateStatus={handleDelegateStatus}
             onDelegateChange={handleDelegateChange}
-            onSelectMessage={setSelectedId}
+            onSelectMessage={(id) => { setSelectedId(id); setMobileTab('detail'); }}
           />
         </div>
         <div
           className="panel-resize-handle"
           onMouseDown={(e) => handleMouseDown(e, 1)}
         />
-        <div style={{ width: panelWidths[2] || 360, flexShrink: 0, minWidth: 200, height: '100%', overflow: 'hidden' }}>
+        <div className={mobileTab === 'briefing' ? 'mobile-active' : ''} style={{ width: panelWidths[2] || 360, flexShrink: 0, minWidth: 200, height: '100%', overflow: 'hidden' }}>
           <Briefing
             briefing={briefing}
             flags={flags || []}
             rules={rules || []}
             onDeleteRule={handleDeleteRule}
-            onSelectMessage={setSelectedId}
+            onSelectMessage={(id) => { setSelectedId(id); setMobileTab('detail'); }}
           />
         </div>
       </div>

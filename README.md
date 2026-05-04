@@ -20,10 +20,15 @@ Every morning, a CEO receives 20+ messages across multiple channels. This system
 | **AI Command Bar** | Natural language interface for queries ("what did Mark send?"), rules ("flag all messages from James"), and actions ("delegate #4 to IT"). |
 | **Drag-to-reclassify** | Drag messages between Decide/Delegate/Ignore. AI auto-drafts handoff messages when moving to Delegate. |
 | **Persistent rules engine** | CEO preferences stored in SQLite. Rules like "always flag messages from Sarah" persist across sessions and re-apply on new data. |
-| **Thread detection** | Links related messages across email, Slack, and WhatsApp into conversation threads. |
-| **Delegation tracking** | Toggle delegated items between Pending and Done. |
-| **Response approval** | Approve AI-drafted responses before sending. |
-| **Deadline extraction** | AI pulls implicit deadlines from messages into a timeline view. |
+| **Thread detection** | Links related messages across email, Slack, and WhatsApp. Click thread pills to see all related messages in a dropdown. |
+| **Delegation tracking** | Toggle delegated items between Pending and Done. Re-assign delegates inline. |
+| **Response approval** | Approve AI-drafted responses before sending. Approved drafts locked with clear status banners. |
+| **Deadline extraction** | AI pulls implicit deadlines ("by end of day", "before Friday") into a timeline view with friendly formatting. |
+| **Dark mode** | Full light/dark theme toggle with warm-tinted OKLCH dark palette. |
+| **Resizable panels** | Drag panel dividers to customize workspace layout (e.g., 70% messages, 30% briefing). |
+| **Mobile responsive** | Tab-based navigation on phones. Tapping a message auto-switches to the detail view. |
+| **Search** | Filter messages by sender, subject, or body text. |
+| **Settings panel** | View/manage active rules, connect integrations, toggle appearance. |
 
 ## Quick Start
 
@@ -63,7 +68,9 @@ Open [http://localhost:3000](http://localhost:3000) and click **Load Sample Data
 │  + command   │  /api/command    │  Messages, Triage,     │
 │  bar         │  /api/rules      │  Rules, Threads,       │
 │              │  /api/triage     │  Flags, Briefings      │
-└──────────────┴──────────────────┴────────────────────────┘
+├──────────────┴──────────────────┴────────────────────────┤
+│  Middleware: API Rate Limiting (per-route, per-IP)       │
+└─────────────────────────────────────────────────────────┘
                         │
                    OpenAI GPT-4o
               (structured JSON output)
@@ -81,6 +88,28 @@ Most naive implementations triage each message individually. This misses critica
 
 Processing all messages together lets the AI detect these patterns.
 
+## Security
+
+### Implemented
+
+| Layer | Implementation |
+|-------|---------------|
+| **API key protection** | OpenAI API key is server-side only (Next.js API routes). Never exposed to the browser. |
+| **API rate limiting** | Per-route, per-IP rate limits via Next.js middleware. `/api/process`: 5/min, `/api/command`: 30/min. Returns 429 with `Retry-After` header. |
+| **Input validation** | All API routes validate request body shape and types before processing. |
+| **No raw SQL** | Prisma ORM prevents SQL injection. All database access goes through parameterized queries. |
+
+### Production security roadmap
+
+| Feature | Notes |
+|---------|-------|
+| **Authentication** | NextAuth.js with OAuth providers (Google, Microsoft). Required for multi-user. |
+| **Row-level security** | When migrating to Supabase: RLS policies to ensure each CEO only sees their own messages, rules, and triage data. Policy example: `(auth.uid() = user_id)` on all tables. |
+| **Redis rate limiting** | Replace in-memory rate limiter with `@upstash/ratelimit` for distributed environments. |
+| **CORS** | Lock `Access-Control-Allow-Origin` to the production domain. |
+| **CSP headers** | Content Security Policy to prevent XSS. |
+| **Audit logging** | Log all rule creation/deletion, triage overrides, and approval actions. |
+
 ## Approach
 
 ### Design Philosophy
@@ -91,21 +120,23 @@ Processing all messages together lets the AI detect these patterns.
 
 ### Design System
 
-The UI uses a warm light theme (designed for a CEO reading at 7:30am, not an SRE at 2am):
+The UI uses a warm light theme (designed for a CEO reading at 7:30am, not an SRE at 2am), with a full dark mode toggle:
 - OKLCH color space for perceptually uniform colors
+- Warm-tinted dark mode (amber hue 60) rather than cold blue
 - Newsreader serif for headings (editorial warmth)
 - System sans-serif for body text (clarity)
-- No gradients, no glassmorphism, no dark mode by default
+- Tab-based mobile navigation at 768px breakpoint
 
 ### Tech Choices
 
 | Decision | Rationale |
-|----------|-----------|
-| **SQLite** over Postgres/Supabase | Zero setup for reviewer. Production would use Supabase for multi-user + real-time. |
+|----------|-----------| 
+| **SQLite** over Postgres/Supabase | Zero setup for reviewer. Production would use Supabase for multi-user + real-time + RLS. |
 | **Single LLM call** over per-message | Cross-message intelligence is the key differentiator |
 | **Next.js App Router** | API routes + SSR + single deploy |
 | **Vanilla CSS** over Tailwind | Full control over design system, OKLCH support |
 | **HTML5 drag-and-drop** | No extra dependencies for reclassification |
+| **In-memory rate limiting** | Zero dependencies. Production uses Redis. |
 
 ## Assumptions
 
@@ -117,10 +148,11 @@ The UI uses a warm light theme (designed for a CEO reading at 7:30am, not an SRE
 ## Future Features (Production Roadmap)
 
 - **Live integrations**: Gmail, Slack, WhatsApp OAuth sign-in (integration modals already in UI)
+- **Historical days**: Navigate between days to review past triage sessions and trends
 - **Send responses**: Send approved drafts directly from the dashboard
-- **Multi-user**: Different C-suite roles with role-based access
+- **Multi-user**: Different C-suite roles with role-based access + row-level security
 - **Calendar integration**: Auto-detect scheduling conflicts with live calendar data
-- **Supabase migration**: Real-time sync, multi-device access
+- **Supabase migration**: Real-time sync, multi-device access, RLS
 - **Mobile app**: React Native wrapper for on-the-go morning briefings
 
 ## Testing with New Data
@@ -149,10 +181,11 @@ Required fields per message:
 
 ```
 ├── prisma/schema.prisma     # Database schema
-├── data/messages.json       # Sample data
+├── public/data/messages.json # Sample data (20 messages)
 ├── src/
+│   ├── middleware.js         # API rate limiting
 │   ├── app/
-│   │   ├── globals.css      # Design system (OKLCH tokens)
+│   │   ├── globals.css      # Design system (OKLCH tokens, mobile)
 │   │   ├── layout.js        # Root layout
 │   │   ├── page.js          # Main page (upload → dashboard)
 │   │   └── api/             # 5 API routes
@@ -160,6 +193,7 @@ Required fields per message:
 │   └── lib/
 │       ├── openai.js        # LLM client + prompts
 │       ├── db.js            # Prisma singleton
+│       ├── rate-limit.js    # Rate limiter utility
 │       └── rules-engine.js  # Rule matching logic
 ```
 
