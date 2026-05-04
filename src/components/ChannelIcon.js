@@ -1,33 +1,22 @@
-export default function ChannelIcon({ channel, size = 14 }) {
+export default function ChannelIcon({ channel, size = 16 }) {
+  let src = '';
+  
   if (channel === 'email') {
-    return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="channel-icon email" style={{ minWidth: size, color: 'var(--channel-email)' }}>
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-        <polyline points="22,6 12,13 2,6"></polyline>
-      </svg>
-    );
+    src = 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg';
+  } else if (channel === 'slack') {
+    src = 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg';
+  } else if (channel === 'whatsapp') {
+    src = 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg';
   }
-  
-  if (channel === 'slack') {
+
+  if (src) {
     return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="channel-icon slack" style={{ minWidth: size, color: 'var(--channel-slack)' }}>
-        <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"></path>
-        <path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path>
-        <path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"></path>
-        <path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"></path>
-        <path d="M14 9.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"></path>
-        <path d="M14 3.5c0-.83.67-1.5 1.5-1.5S17 2.67 17 3.5 16.33 5 15.5 5H14V3.5z"></path>
-        <path d="M10 14.5c0 .83-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5z"></path>
-        <path d="M10 20.5c0 .83-.67 1.5-1.5 1.5S7 21.33 7 20.5 7.67 19 8.5 19H10v1.5z"></path>
-      </svg>
-    );
-  }
-  
-  if (channel === 'whatsapp') {
-    return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="channel-icon whatsapp" style={{ minWidth: size, color: 'var(--channel-whatsapp)' }}>
-        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-      </svg>
+      <img 
+        src={src} 
+        alt={`${channel} logo`} 
+        style={{ width: size, height: size, objectFit: 'contain' }} 
+        className={`channel-icon ${channel}`}
+      />
     );
   }
 
