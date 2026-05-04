@@ -286,7 +286,7 @@ h4 { font-size: 1rem; font-weight: 600; }
 }
 
 /* Urgency dots */
-.urgency-dots { display: flex; gap: 2px; }
+.urgency-dots { display: flex; gap: 4px; }
 
 .urgency-dot {
   width: 5px;
@@ -419,12 +419,12 @@ h4 { font-size: 1rem; font-weight: 600; }
 }
 
 .detail-section-title {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-tertiary);
-  margin-bottom: 10px;
-  font-weight: 600;
+  margin-bottom: 12px;
+  font-weight: 700;
 }
 
 .detail-body {

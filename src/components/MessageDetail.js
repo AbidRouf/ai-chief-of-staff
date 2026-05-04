@@ -35,9 +35,11 @@ function friendlyDeadline(deadlineStr) {
     else if (diffHrs < 24) relative = `(in ${diffHrs} hours)`;
     else if (diffDays <= 7) relative = `(in ${diffDays} days)`;
 
+    const isMidnight = d.getHours() === 0 && d.getMinutes() === 0;
+
     return d.toLocaleDateString('en-GB', {
       weekday: 'short', day: 'numeric', month: 'short',
-      hour: '2-digit', minute: '2-digit',
+      ...(isMidnight ? {} : { hour: '2-digit', minute: '2-digit' })
     }) + (relative ? ' ' + relative : '');
   } catch {
     return deadlineStr;
@@ -166,7 +168,7 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
       {message.subject && (
         <div className="detail-section">
           <div className="detail-section-title">Subject</div>
-          <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{message.subject}</div>
+          <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{message.subject}</div>
         </div>
       )}
 

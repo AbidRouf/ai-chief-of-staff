@@ -1,5 +1,31 @@
 'use client';
 
+function friendlyDeadline(deadlineStr) {
+  if (!deadlineStr) return null;
+  try {
+    const d = new Date(deadlineStr);
+    if (isNaN(d.getTime())) return deadlineStr;
+    const now = new Date();
+    const diffMs = d - now;
+    const diffHrs = Math.round(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+    let relative = '';
+    if (diffHrs < 0) relative = '(overdue)';
+    else if (diffHrs < 24) relative = `(in ${diffHrs} hours)`;
+    else if (diffDays <= 7) relative = `(in ${diffDays} days)`;
+
+    const isMidnight = d.getHours() === 0 && d.getMinutes() === 0;
+
+    return d.toLocaleDateString('en-GB', {
+      weekday: 'short', day: 'numeric', month: 'short',
+      ...(isMidnight ? {} : { hour: '2-digit', minute: '2-digit' })
+    }) + (relative ? ' ' + relative : '');
+  } catch {
+    return deadlineStr;
+  }
+}
+
 export default function Briefing({ briefing, flags, rules, onDeleteRule, onSelectMessage }) {
   if (!briefing) {
     return (
@@ -57,7 +83,7 @@ export default function Briefing({ briefing, flags, rules, onDeleteRule, onSelec
                 <div className="briefing-decision-title">{decision.title}</div>
                 <div className="briefing-decision-desc">{decision.description}</div>
                 {decision.deadline && (
-                  <div className="briefing-decision-deadline">⏰ {decision.deadline}</div>
+                  <div className="briefing-decision-deadline">⏰ {friendlyDeadline(decision.deadline)}</div>
                 )}
               </div>
             ))}
