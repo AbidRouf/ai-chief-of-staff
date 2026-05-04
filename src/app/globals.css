@@ -215,8 +215,16 @@ h4 { font-size: 1rem; font-weight: 600; }
   pointer-events: none;
 }
 
-/* Filter tabs */
-.filter-tabs { display: flex; gap: 4px; margin-top: 10px; }
+.filter-tabs { 
+  display: flex; 
+  gap: 4px; 
+  margin-top: 10px; 
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.filter-tabs::-webkit-scrollbar { 
+  display: none; /* WebKit */
+}
 
 .filter-tab {
   padding: 5px 12px;

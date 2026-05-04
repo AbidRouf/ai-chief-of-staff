@@ -25,7 +25,7 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
   const filtered = filter === 'archived'
     ? archivedMessages
     : filter === 'all'
-      ? activeMessages
+      ? searchFiltered
       : activeMessages.filter(m => m.triage?.category === filter);
 
   const categories = ['decide', 'delegate', 'ignore'];
@@ -39,7 +39,7 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
   }
 
   const counts = {
-    all: activeMessages.length,
+    all: searchFiltered.length,
     decide: activeMessages.filter(m => m.triage?.category === 'decide').length,
     delegate: activeMessages.filter(m => m.triage?.category === 'delegate').length,
     ignore: activeMessages.filter(m => m.triage?.category === 'ignore').length,
