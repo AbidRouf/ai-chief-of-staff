@@ -45,36 +45,36 @@
 }
 
 [data-theme="dark"] {
-  /* Warm-tinted dark neutrals: hue 60 (amber undertone), low chroma at low lightness */
-  --canvas: oklch(14% 0.006 60);
-  --surface: oklch(18% 0.007 60);
-  --surface-hover: oklch(22% 0.008 60);
-  --text-primary: oklch(92% 0.006 60);
-  --text-secondary: oklch(68% 0.006 60);
-  --text-tertiary: oklch(42% 0.005 60);
-  --border: oklch(25% 0.006 60);
-  --border-strong: oklch(32% 0.008 60);
+  /* Premium Dark Mode: deeper canvas, stronger surface contrast, refined semantics */
+  --canvas: oklch(12% 0.005 60);
+  --surface: oklch(19% 0.008 60);
+  --surface-hover: oklch(24% 0.01 60);
+  --text-primary: oklch(95% 0.004 60);
+  --text-secondary: oklch(75% 0.005 60);
+  --text-tertiary: oklch(55% 0.005 60);
+  --border: oklch(30% 0.006 60);
+  --border-strong: oklch(38% 0.008 60);
 
-  /* Semantic colors: reduced chroma in dark, just enough to read */
-  --decide: oklch(65% 0.16 25);
-  --decide-bg: oklch(22% 0.04 25);
-  --decide-border: oklch(30% 0.06 25);
-  --delegate: oklch(65% 0.10 250);
-  --delegate-bg: oklch(22% 0.03 250);
-  --delegate-border: oklch(30% 0.05 250);
-  --ignore: oklch(55% 0.01 60);
-  --ignore-bg: oklch(20% 0.004 60);
-  --ignore-border: oklch(28% 0.006 60);
+  /* Semantic colors: rich backgrounds, vibrant borders */
+  --decide: oklch(75% 0.16 25);
+  --decide-bg: oklch(20% 0.05 25);
+  --decide-border: oklch(36% 0.08 25);
+  --delegate: oklch(75% 0.12 250);
+  --delegate-bg: oklch(20% 0.04 250);
+  --delegate-border: oklch(36% 0.06 250);
+  --ignore: oklch(65% 0.01 60);
+  --ignore-bg: oklch(20% 0.005 60);
+  --ignore-border: oklch(32% 0.008 60);
 
-  --flag-critical: oklch(65% 0.18 25);
-  --flag-critical-bg: oklch(22% 0.04 25);
-  --flag-warning: oklch(72% 0.12 85);
-  --flag-warning-bg: oklch(22% 0.04 85);
-  --flag-info: oklch(65% 0.10 250);
-  --flag-info-bg: oklch(22% 0.03 250);
+  --flag-critical: oklch(70% 0.18 25);
+  --flag-critical-bg: oklch(22% 0.06 25);
+  --flag-warning: oklch(80% 0.14 85);
+  --flag-warning-bg: oklch(24% 0.06 85);
+  --flag-info: oklch(70% 0.12 250);
+  --flag-info-bg: oklch(22% 0.05 250);
 
-  --shadow-subtle: 0 1px 4px oklch(5% 0.005 60 / 0.4);
-  --shadow-card: 0 2px 10px oklch(5% 0.005 60 / 0.4);
+  --shadow-subtle: 0 1px 4px rgba(0,0,0,0.4);
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
