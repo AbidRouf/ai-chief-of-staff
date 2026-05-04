@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Message {
+  id          Int      @id
+  channel     String
+  sender      String
+  recipient   String?
+  subject     String?
+  channelName String?
+  body        String
+  timestamp   DateTime
+  sessionId   String
+  triage      Triage?
+
+  @@index([sessionId])
+  @@index([sender])
+}
+
+model Triage {
+  id               Int     @id @default(autoincrement())
+  messageId        Int     @unique
+  message          Message @relation(fields: [messageId], references: [id])
+  category         String
+  originalCategory String
+  urgency          Int
+  reasoning        String
+  delegateTo       String?
+  draftedResponse  String
+  overriddenBy     String?
+  approved         Boolean @default(false)
+  delegateStatus   String  @default("pending")
+  deadline         String?
+  sessionId        String
+
+  @@index([sessionId])
+  @@index([category])
+}
+
+model Rule {
+  id          Int      @id @default(autoincrement())
+  type        String
+  condition   String
+  action      String
+  naturalText String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Thread {
+  id         Int    @id @default(autoincrement())
+  name       String
+  messageIds String
+  sessionId  String
+
+  @@index([sessionId])
+}
+
+model Flag {
+  id              Int    @id @default(autoincrement())
+  title           String
+  severity        String
+  description     String
+  relatedMessages String
+  sessionId       String
+
+  @@index([sessionId])
+}
+
+model Briefing {
+  id               Int      @id @default(autoincrement())
+  executiveSummary String
+  decisionsNeeded  String
+  delegatedItems   String
+  timeline         String
+  sessionId        String
+  createdAt        DateTime @default(now())
+
+  @@index([sessionId])
+}
