@@ -45,7 +45,7 @@ cd ai-chief-of-staff
 npm install
 
 # 2. Add your API key
-cp .env.local
+cp .env.example .env.local
 # Edit .env.local and add your OPENAI_API_KEY
 
 # 3. Set up database and run
