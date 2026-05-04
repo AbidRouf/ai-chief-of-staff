@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import ChannelIcon from './ChannelIcon';
 
 export default function IntegrationModal({ service, onClose }) {
   const configs = {
@@ -48,7 +49,9 @@ export default function IntegrationModal({ service, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <div style={{ fontSize: '2rem', marginBottom: 12 }}>{config.icon}</div>
+        <div style={{ marginBottom: 16, display: 'flex' }}>
+          <ChannelIcon channel={service === 'gmail' ? 'email' : service} size={48} />
+        </div>
         <h2 className="modal-title">{config.title}</h2>
         <p className="modal-desc">{config.description}</p>
 

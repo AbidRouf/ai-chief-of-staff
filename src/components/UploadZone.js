@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import IntegrationModal from './IntegrationModal';
+import ChannelIcon from './ChannelIcon';
 
 export default function UploadZone({ onLoadSample, onUpload }) {
   const [dragover, setDragover] = useState(false);
@@ -75,14 +76,14 @@ export default function UploadZone({ onLoadSample, onUpload }) {
         </div>
 
         <div className="upload-sources">
-          <button className="source-btn" onClick={() => setIntegrationService('gmail')}>
-            <span className="source-icon">📧</span> Gmail
+          <button className="source-btn" onClick={() => setIntegrationService('gmail')} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="source-icon" style={{ display: 'flex' }}><ChannelIcon channel="email" size={16} /></span> Gmail
           </button>
-          <button className="source-btn" onClick={() => setIntegrationService('slack')}>
-            <span className="source-icon">💬</span> Slack
+          <button className="source-btn" onClick={() => setIntegrationService('slack')} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="source-icon" style={{ display: 'flex' }}><ChannelIcon channel="slack" size={16} /></span> Slack
           </button>
-          <button className="source-btn" onClick={() => setIntegrationService('whatsapp')}>
-            <span className="source-icon">📱</span> WhatsApp
+          <button className="source-btn" onClick={() => setIntegrationService('whatsapp')} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="source-icon" style={{ display: 'flex' }}><ChannelIcon channel="whatsapp" size={16} /></span> WhatsApp
           </button>
         </div>
       </div>
