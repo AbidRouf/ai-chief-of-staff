@@ -105,7 +105,13 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
         <div className="message-meta">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <TriageBadge category={msg.triage?.category || 'ignore'} />
-            {msg.triage?.overriddenBy && <span className="override-badge">{msg.triage.overriddenBy}</span>}
+            {msg.triage?.overriddenBy && (
+              <span className="override-badge">
+                {msg.triage.overriddenBy === 'user' ? 'Manual Override' : 
+                 msg.triage.overriddenBy === 'rules' ? 'Rule Match' : 
+                 msg.triage.overriddenBy}
+              </span>
+            )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             {thread && (

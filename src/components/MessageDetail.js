@@ -125,7 +125,13 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
             editable={true}
             onChangeCategory={(cat) => onChangeCategory && onChangeCategory(message.id, cat)}
           />
-          {triage?.overriddenBy && <span className="override-badge">{triage.overriddenBy}</span>}
+          {triage?.overriddenBy && (
+            <span className="override-badge">
+              {triage.overriddenBy === 'user' ? 'Manual Override' : 
+               triage.overriddenBy === 'rules' ? 'Rule Match' : 
+               triage.overriddenBy}
+            </span>
+          )}
         </div>
         <div className="detail-meta">
           <div className="detail-meta-item">
