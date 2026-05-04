@@ -126,7 +126,8 @@ Return this exact JSON structure:
       "urgency": 1-5,
       "reasoning": "...",
       "delegateTo": "name/role or null",
-      "draftedResponse": "...",
+      "drafted_responses": ["Option 1...", "Option 2..."],
+      "suggested_actions": ["CC Mary", "Schedule Meeting"],
       "deadline": "deadline string or null",
       "flags": ["flag_keyword"]
     }
@@ -186,7 +187,11 @@ Given the message, its old category, and its new category, provide:
 Return JSON:
 {
   "delegateTo": "person/role or null",
-  "draftedResponse": "appropriate draft for the new category",
+  "drafted_responses": [
+    "Option 1: Draft response agreeing/confirming",
+    "Option 2: Draft response pushing back/declining"
+  ],
+  "suggested_actions": ["CC Mary", "Schedule 15m Meeting"],
   "reasoning": "why this category makes sense",
   "urgency": 1-5
 }`;

@@ -58,7 +58,10 @@ export async function POST(request) {
         urgency: t.urgency,
         reasoning: t.reasoning,
         delegateTo: t.delegateTo || null,
-        draftedResponse: t.draftedResponse || '',
+        draftedResponse: JSON.stringify({
+          options: t.drafted_responses || [t.draftedResponse || ''],
+          actions: t.suggested_actions || []
+        }),
         deadline: t.deadline || null,
         overriddenBy: t.overriddenBy || null,
         sessionId,

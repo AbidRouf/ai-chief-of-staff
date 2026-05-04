@@ -30,7 +30,10 @@ export async function POST(request) {
         originalCategory: message.triage?.originalCategory || oldCategory,
         overriddenBy: 'user',
         delegateTo: result.delegateTo || null,
-        draftedResponse: result.draftedResponse || message.triage?.draftedResponse || '',
+        draftedResponse: JSON.stringify({
+          options: result.drafted_responses || [result.draftedResponse || message.triage?.draftedResponse || ''],
+          actions: result.suggested_actions || []
+        }),
         reasoning: result.reasoning || message.triage?.reasoning || '',
         urgency: result.urgency || message.triage?.urgency || 3,
       },

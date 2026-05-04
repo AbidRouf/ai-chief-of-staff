@@ -48,7 +48,7 @@ function friendlyDeadline(deadlineStr) {
 const URGENCY_LABELS = { 1: 'Low', 2: 'Minor', 3: 'Medium', 4: 'High', 5: 'Critical' };
 
 export default function MessageDetail({ message, thread, allMessages, onApprove, onDelegateStatus, onDelegateChange, onSelectMessage, onChangeCategory, onChangeUrgency }) {
-  const [draft, setDraft] = useState(message?.triage?.draftedResponse || '');
+  const [draft, setDraft] = useState('');
   const [prevId, setPrevId] = useState(null);
   const [editingDelegate, setEditingDelegate] = useState(false);
   const [delegateInput, setDelegateInput] = useState('');
@@ -75,11 +75,21 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
     d.toLowerCase().includes(delegateInput.toLowerCase())
   );
 
+  let parsedDraft = { options: [], actions: [] };
+  if (message?.triage?.draftedResponse) {
+    try {
+      parsedDraft = JSON.parse(message.triage.draftedResponse);
+      if (Array.isArray(parsedDraft)) parsedDraft = { options: parsedDraft, actions: [] };
+      if (!parsedDraft.options) parsedDraft.options = [];
+      if (!parsedDraft.actions) parsedDraft.actions = [];
+    } catch {
+      parsedDraft = { options: [message.triage.draftedResponse], actions: [] };
+    }
+  }
+
   if (message?.id !== prevId) {
     setPrevId(message?.id);
-    if (message?.triage?.draftedResponse) {
-      setDraft(message.triage.draftedResponse);
-    }
+    setDraft(parsedDraft.options[0] || '');
     setEditingDelegate(false);
   }
 
@@ -253,6 +263,28 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
 
       <div className="detail-section">
         <div className="detail-section-title">Drafted Response</div>
+        
+        {parsedDraft.options.length > 1 && !triage?.approved && (
+          <div className="draft-options" style={{ display: 'flex', gap: '10px', marginBottom: '10px', overflowX: 'auto', paddingBottom: '4px' }}>
+            {parsedDraft.options.map((opt, idx) => (
+              <div 
+                key={idx} 
+                className="draft-option-card"
+                onClick={() => setDraft(opt)}
+                style={{
+                  padding: '10px', border: draft === opt ? '2px solid var(--primary)' : '1px solid var(--border)', 
+                  borderRadius: '6px', minWidth: '200px', cursor: 'pointer', background: 'var(--surface)'
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', fontWeight: '600', marginBottom: '4px', color: draft === opt ? 'var(--primary)' : 'var(--text-secondary)' }}>Option {idx + 1}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {opt}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         <textarea
           className="detail-draft-textarea"
           value={draft}
@@ -269,6 +301,25 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
             {triage?.approved ? '✓ Approved' : 'Approve Draft'}
           </button>
         </div>
+
+        {parsedDraft.actions.length > 0 && !triage?.approved && (
+          <div className="suggested-actions" style={{ marginTop: '16px' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8, letterSpacing: '0.05em' }}>SUGGESTED ACTIONS</div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {parsedDraft.actions.map((act, idx) => (
+                <span key={idx} className="action-pill" onClick={(e) => {
+                  e.target.style.background = 'var(--primary)';
+                  e.target.style.color = 'white';
+                  e.target.innerText = '✓ Queued';
+                  e.target.style.pointerEvents = 'none';
+                }}>
+                  ⚡ {act}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {triage?.approved && (
           <div className="approved-banner">
             ✓ This response has been reviewed and approved. Ready to send when integrations are connected. Click "Approved" to revoke.

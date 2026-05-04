@@ -252,6 +252,18 @@ h4 { font-size: 1rem; font-weight: 600; }
 }
 
 .message-item:hover { background: var(--surface-hover); }
+.message-item.dragging {
+  opacity: 0.5;
+  background: var(--surface);
+  border-style: dashed;
+}
+
+.message-item.approved-item {
+  background: rgba(16, 185, 129, 0.05);
+  border-left-color: var(--primary);
+  opacity: 0.8;
+}
+
 .message-item.selected { background: var(--surface-hover); }
 
 .message-item.selected::before {
@@ -472,7 +484,24 @@ h4 { font-size: 1rem; font-weight: 600; }
   transition: border-color var(--transition-fast);
 }
 
-.detail-draft-textarea:focus { border-color: var(--border-strong); }
+.detail-draft-textarea:focus { outline: none; border-color: var(--text-tertiary); }
+
+.action-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.action-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
 
 .detail-actions { display: flex; gap: 8px; margin-top: 10px; }
 

@@ -6,6 +6,7 @@ import ChannelIcon from './ChannelIcon';
 
 export default function MessageList({ messages, threads, selectedId, onSelect, onReclassify }) {
   const [filter, setFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('severity');
   const [dragOverCategory, setDragOverCategory] = useState(null);
   const [search, setSearch] = useState('');
 
@@ -18,9 +19,14 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
       )
     : messages;
 
-  const filtered = filter === 'all'
-    ? searchFiltered
-    : searchFiltered.filter(m => m.triage?.category === filter);
+  const activeMessages = searchFiltered.filter(m => !m.triage?.approved);
+  const archivedMessages = searchFiltered.filter(m => m.triage?.approved);
+
+  const filtered = filter === 'archived'
+    ? archivedMessages
+    : filter === 'all'
+      ? activeMessages
+      : activeMessages.filter(m => m.triage?.category === filter);
 
   const categories = ['decide', 'delegate', 'ignore'];
   const grouped = {};
@@ -28,15 +34,16 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
     grouped[cat] = filtered.filter(m => m.triage?.category === cat);
   }
 
-  if (filter !== 'all') {
+  if (filter !== 'all' && filter !== 'archived') {
     grouped[filter] = filtered;
   }
 
   const counts = {
-    all: messages.length,
-    decide: messages.filter(m => m.triage?.category === 'decide').length,
-    delegate: messages.filter(m => m.triage?.category === 'delegate').length,
-    ignore: messages.filter(m => m.triage?.category === 'ignore').length,
+    all: activeMessages.length,
+    decide: activeMessages.filter(m => m.triage?.category === 'decide').length,
+    delegate: activeMessages.filter(m => m.triage?.category === 'delegate').length,
+    ignore: activeMessages.filter(m => m.triage?.category === 'ignore').length,
+    archived: archivedMessages.length,
   };
 
   function getThread(messageId) {
@@ -85,7 +92,7 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
     return (
       <div
         key={msg.id}
-        className={`message-item ${selectedId === msg.id ? 'selected' : ''}`}
+        className={`message-item ${selectedId === msg.id ? 'selected' : ''} ${msg.triage?.approved ? 'approved-item' : ''}`}
         onClick={() => onSelect(msg.id)}
         draggable
         onDragStart={(e) => handleDragStart(e, msg.id)}
@@ -150,7 +157,10 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
           {category} ({msgs.length})
         </div>
         {msgs
-          .sort((a, b) => (b.triage?.urgency || 0) - (a.triage?.urgency || 0))
+          .sort((a, b) => {
+            if (sortBy === 'severity') return (b.triage?.urgency || 0) - (a.triage?.urgency || 0);
+            return new Date(b.timestamp) - new Date(a.timestamp);
+          })
           .map(renderMessageItem)}
       </div>
     );
@@ -171,7 +181,7 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
           />
         </div>
         <div className="filter-tabs">
-          {['all', 'decide', 'delegate', 'ignore'].map(f => (
+          {['all', 'decide', 'delegate', 'ignore', 'archived'].map(f => (
             <button
               key={f}
               className={`filter-tab ${filter === f ? 'active' : ''}`}
@@ -181,12 +191,26 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
             </button>
           ))}
         </div>
+        <div className="sort-bar" style={{ padding: '0 20px 10px', display: 'flex', justifyContent: 'flex-end' }}>
+          <select 
+            className="sort-select" 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: 4, border: '1px solid var(--border)', background: 'var(--surface)' }}
+          >
+            <option value="severity">Sort by: Most Important</option>
+            <option value="recent">Sort by: Most Recent</option>
+          </select>
+        </div>
       </div>
       <div className="panel-content">
         {filter === 'all'
           ? categories.map(cat => renderCategory(cat, grouped[cat] || []))
-          : (grouped[filter] || [])
-              .sort((a, b) => (b.triage?.urgency || 0) - (a.triage?.urgency || 0))
+          : (filter === 'archived' ? filtered : (grouped[filter] || []))
+              .sort((a, b) => {
+                if (sortBy === 'severity') return (b.triage?.urgency || 0) - (a.triage?.urgency || 0);
+                return new Date(b.timestamp) - new Date(a.timestamp);
+              })
               .map(renderMessageItem)
         }
       </div>
