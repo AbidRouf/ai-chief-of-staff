@@ -261,9 +261,6 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
           >
             {triage?.approved ? '✓ Approved' : 'Approve Draft'}
           </button>
-          <button className="btn" style={{ opacity: 0.5, cursor: 'not-allowed' }} title="Coming soon">
-            Send Response
-          </button>
         </div>
         {triage?.approved && (
           <div className="approved-banner">
