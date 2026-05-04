@@ -112,6 +112,10 @@ Processing all messages together lets the AI detect these patterns.
 
 ## How I Approached the Task
 
+1. Architecture: I started by deeply analyzing the problem and brainstorming several different architectural solutions to achieve "Inbox Zero" for a Chief of Staff. Once I had formulated my own potential approaches, I used Gemini  as a sounding board to debate the trade-offs and select the most scalable stack.
+2. Execution: After finalizing the plan, deliverables, and security features myself, I used Claude Code to create the app. 
+3. Frictionless UX & Quality Assurance: My priority was building a highly intuitive interface that requires almost zero client input to operate. I implemented one-click "Approve" and "Done" workflows to make triaging incredibly fast, then thoroughly tested the dashboard across multiple devices to ensure a flawless experience.
+   
 ### Design Philosophy
 
 - **Functionality first**: Every requirement from the brief is explicitly implemented and tested
