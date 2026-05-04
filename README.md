@@ -40,7 +40,7 @@ Every morning, a CEO receives 20+ messages across multiple channels. This system
 
 ```bash
 # 1. Clone and install
-git clone <your-repo-url>
+git clone https://github.com/AbidRouf/ai-chief-of-staff.git
 cd ai-chief-of-staff
 npm install
 
