@@ -199,7 +199,7 @@ export default function Dashboard({ data, onUpdateData }) {
       </header>
 
       <div className="dashboard" ref={dashboardRef}>
-        <div style={{ width: panelWidths[0] || 320, flexShrink: 0, minWidth: 200 }}>
+        <div style={{ width: panelWidths[0] || 320, flexShrink: 0, minWidth: 200, height: '100%', overflow: 'hidden' }}>
           <MessageList
             messages={messages || []}
             threads={threads || []}
@@ -212,7 +212,7 @@ export default function Dashboard({ data, onUpdateData }) {
           className="panel-resize-handle"
           onMouseDown={(e) => handleMouseDown(e, 0)}
         />
-        <div style={{ flex: 1, minWidth: 200 }}>
+        <div style={{ flex: 1, minWidth: 200, height: '100%', overflow: 'hidden' }}>
           <MessageDetail
             message={selectedMessage}
             thread={selectedMessage ? getThread(selectedMessage.id) : null}
@@ -226,7 +226,7 @@ export default function Dashboard({ data, onUpdateData }) {
           className="panel-resize-handle"
           onMouseDown={(e) => handleMouseDown(e, 1)}
         />
-        <div style={{ width: panelWidths[2] || 360, flexShrink: 0, minWidth: 200 }}>
+        <div style={{ width: panelWidths[2] || 360, flexShrink: 0, minWidth: 200, height: '100%', overflow: 'hidden' }}>
           <Briefing
             briefing={briefing}
             flags={flags || []}

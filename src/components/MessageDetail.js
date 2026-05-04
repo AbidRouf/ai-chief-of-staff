@@ -185,6 +185,8 @@ export default function MessageDetail({ message, thread, onApprove, onDelegateSt
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           rows={5}
+          readOnly={triage?.approved}
+          style={triage?.approved ? { opacity: 0.7 } : {}}
         />
         <div className="detail-actions">
           <button
@@ -197,6 +199,11 @@ export default function MessageDetail({ message, thread, onApprove, onDelegateSt
             Send Response
           </button>
         </div>
+        {triage?.approved && (
+          <div className="approved-banner">
+            ✓ This response has been reviewed and approved. Ready to send when integrations are connected. Click "Approved" to revoke.
+          </div>
+        )}
       </div>
     </div>
   );
