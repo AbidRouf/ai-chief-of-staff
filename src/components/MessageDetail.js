@@ -3,8 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import TriageBadge from './TriageBadge';
 import ThreadIndicator from './ThreadIndicator';
-
-const CHANNEL_ICONS = { email: '📧', slack: '💬', whatsapp: '📱' };
+import ChannelIcon from './ChannelIcon';
 
 function friendlyDate(dateStr) {
   if (!dateStr) return null;
@@ -117,8 +116,8 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
   return (
     <div className="panel fade-in" style={{ background: 'var(--surface)' }}>
       <div className="detail-header">
-        <div className="detail-from">
-          <span>{CHANNEL_ICONS[message.channel]}</span>
+        <div className="detail-from" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <ChannelIcon channel={message.channel} size={18} />
           <span>{senderName}</span>
           <TriageBadge
             category={triage?.category || 'ignore'}

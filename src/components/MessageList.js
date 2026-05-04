@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import TriageBadge from './TriageBadge';
-
-const CHANNEL_ICONS = { email: '📧', slack: '💬', whatsapp: '📱' };
+import ChannelIcon from './ChannelIcon';
 
 export default function MessageList({ messages, threads, selectedId, onSelect, onReclassify }) {
   const [filter, setFilter] = useState('all');
@@ -93,8 +92,8 @@ export default function MessageList({ messages, threads, selectedId, onSelect, o
         onDragEnd={handleDragEnd}
       >
         <div className="message-item-header">
-          <div className="message-sender">
-            <span className="message-channel-icon">{CHANNEL_ICONS[msg.channel] || '📩'}</span>
+          <div className="message-sender" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ChannelIcon channel={msg.channel} size={14} />
             {senderName}
           </div>
           <span className="message-time">{time}</span>
