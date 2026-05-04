@@ -30,7 +30,7 @@ Every morning, a CEO receives 20+ messages across multiple channels. This system
 | **Search** | Filter messages by sender, subject, or body text. |
 | **Settings panel** | View/manage active rules, connect integrations, toggle appearance. |
 
-## Quick Start
+## Setup Instructions
 
 ### Prerequisites
 - Node.js 18+ 
@@ -110,7 +110,7 @@ Processing all messages together lets the AI detect these patterns.
 | **CSP headers** | Content Security Policy to prevent XSS. |
 | **Audit logging** | Log all rule creation/deletion, triage overrides, and approval actions. |
 
-## Approach
+## How I Approached the Task
 
 ### Design Philosophy
 
