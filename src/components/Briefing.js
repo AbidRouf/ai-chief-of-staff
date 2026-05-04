@@ -39,11 +39,6 @@ export default function Briefing({ briefing, flags, rules, onDeleteRule, onSelec
     <div className="panel" style={{ background: 'var(--surface)' }}>
       <div className="panel-header">
         <h2>Daily Briefing</h2>
-        <div style={{ marginTop: 6 }}>
-          <button className="btn btn-sm" onClick={() => window.print()}>
-            Print Briefing
-          </button>
-        </div>
       </div>
       <div className="panel-content" style={{ padding: '0 20px 20px' }}>
 
