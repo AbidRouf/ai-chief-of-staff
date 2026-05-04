@@ -130,7 +130,7 @@ export default function MessageDetail({ message, thread, allMessages, onApprove,
         <div className="detail-meta">
           <div className="detail-meta-item">
             <span style={{ color: 'var(--text-tertiary)' }}>via</span>
-            <span style={{ textTransform: 'capitalize' }}>{message.channel}</span>
+            <span className={`channel-text ${message.channel}`} style={{ textTransform: 'capitalize', fontWeight: 500 }}>{message.channel}</span>
             {message.channelName && <span style={{ color: 'var(--text-tertiary)' }}>in {message.channelName}</span>}
           </div>
           <div className="detail-meta-item">

@@ -27,6 +27,10 @@
   --flag-info: oklch(55% 0.12 250);
   --flag-info-bg: oklch(95% 0.03 250);
 
+  --channel-email: oklch(60% 0.12 250);
+  --channel-slack: oklch(50% 0.15 310);
+  --channel-whatsapp: oklch(55% 0.15 150);
+
   --font-serif: 'Newsreader', Georgia, serif;
   --font-sans: -apple-system, 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
@@ -73,9 +77,17 @@
   --flag-info: oklch(70% 0.12 250);
   --flag-info-bg: oklch(22% 0.05 250);
 
+  --channel-email: oklch(75% 0.12 250);
+  --channel-slack: oklch(75% 0.12 310);
+  --channel-whatsapp: oklch(75% 0.15 150);
+
   --shadow-subtle: 0 1px 4px rgba(0,0,0,0.4);
   --shadow-card: 0 4px 12px rgba(0,0,0,0.5);
 }
+
+.channel-text.email { color: var(--channel-email); }
+.channel-text.slack { color: var(--channel-slack); }
+.channel-text.whatsapp { color: var(--channel-whatsapp); }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
