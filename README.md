@@ -55,26 +55,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) and click **Load Sample Data** to process the 20 sample messages.
 
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Next.js App Router                    │
-├──────────────┬──────────────────┬────────────────────────┤
-│   Frontend   │   API Routes     │   Database             │
-│              │                  │                        │
-│  3-panel     │  /api/process    │  SQLite + Prisma       │
-│  dashboard   │  /api/reclassify │                        │
-│  + command   │  /api/command    │  Messages, Triage,     │
-│  bar         │  /api/rules      │  Rules, Threads,       │
-│              │  /api/triage     │  Flags, Briefings      │
-├──────────────┴──────────────────┴────────────────────────┤
-│  Middleware: API Rate Limiting (per-route, per-IP)       │
-└─────────────────────────────────────────────────────────┘
-                        │
-                   OpenAI GPT-4o
-              (structured JSON output)
-```
 
 ### Why one LLM call for all messages?
 
@@ -99,16 +79,6 @@ Processing all messages together lets the AI detect these patterns.
 | **Input validation** | All API routes validate request body shape and types before processing. |
 | **No raw SQL** | Prisma ORM prevents SQL injection. All database access goes through parameterized queries. |
 
-### Production security roadmap
-
-| Feature | Notes |
-|---------|-------|
-| **Authentication** | NextAuth.js with OAuth providers (Google, Microsoft). Required for multi-user. |
-| **Row-level security** | When migrating to Supabase: RLS policies to ensure each CEO only sees their own messages, rules, and triage data. Policy example: `(auth.uid() = user_id)` on all tables. |
-| **Redis rate limiting** | Replace in-memory rate limiter with `@upstash/ratelimit` for distributed environments. |
-| **CORS** | Lock `Access-Control-Allow-Origin` to the production domain. |
-| **CSP headers** | Content Security Policy to prevent XSS. |
-| **Audit logging** | Log all rule creation/deletion, triage overrides, and approval actions. |
 
 ## How I Approached the Task
 
@@ -116,20 +86,6 @@ Processing all messages together lets the AI detect these patterns.
 2. Execution: After finalizing the plan, deliverables, and security features myself, I used Claude Code to create the app. 
 3. Frictionless UX & Quality Assurance: My priority was building a highly intuitive interface that requires almost zero client input to operate. I implemented one-click "Approve" and "Done" workflows to make triaging incredibly fast, then thoroughly tested the dashboard across multiple devices to ensure a flawless experience.
    
-### Design Philosophy
-
-- **Functionality first**: Every requirement from the brief is explicitly implemented and tested
-- **CEO-centric UX**: Minimal interaction needed. AI auto-drafts, auto-suggests, auto-detects
-- **Production thinking**: SQLite persistence, error handling, session history, rule engine
-
-### Design System
-
-The UI uses a warm light theme (designed for a CEO reading at 7:30am, not an SRE at 2am), with a full dark mode toggle:
-- OKLCH color space for perceptually uniform colors
-- Warm-tinted dark mode (amber hue 60) rather than cold blue
-- Newsreader serif for headings (editorial warmth)
-- System sans-serif for body text (clarity)
-- Tab-based mobile navigation at 768px breakpoint
 
 ### Tech Choices
 
@@ -159,47 +115,6 @@ The UI uses a warm light theme (designed for a CEO reading at 7:30am, not an SRE
 - **Supabase migration**: Real-time sync, multi-device access, RLS
 - **Mobile app**: React Native wrapper for on-the-go morning briefings
 
-## Testing with New Data
-
-To test with your own messages:
-
-1. Create a JSON file matching the format in `data/messages.json`
-2. Either upload it via the drag-and-drop zone, or replace the sample file
-3. Existing rules will be applied to the new data automatically
-
-Required fields per message:
-```json
-{
-  "id": 1,
-  "channel": "email|slack|whatsapp",
-  "from": "sender name or email",
-  "body": "message content",
-  "timestamp": "2026-03-18T08:12:00Z",
-  "to": "optional",
-  "subject": "optional",
-  "channel_name": "optional, for slack channels"
-}
-```
-
-## Project Structure
-
-```
-├── prisma/schema.prisma     # Database schema
-├── public/data/messages.json # Sample data (20 messages)
-├── src/
-│   ├── middleware.js         # API rate limiting
-│   ├── app/
-│   │   ├── globals.css      # Design system (OKLCH tokens, mobile)
-│   │   ├── layout.js        # Root layout
-│   │   ├── page.js          # Main page (upload → dashboard)
-│   │   └── api/             # 5 API routes
-│   ├── components/          # 11 React components
-│   └── lib/
-│       ├── openai.js        # LLM client + prompts
-│       ├── db.js            # Prisma singleton
-│       ├── rate-limit.js    # Rate limiter utility
-│       └── rules-engine.js  # Rule matching logic
-```
 
 ## Built With
 
